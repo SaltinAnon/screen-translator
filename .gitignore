@@ -1,0 +1,69 @@
+# ============================================================================
+# ScreenTranslator .gitignore
+# 原则：只提交「人写的」源码与文档，机器生成的一律不提交
+# ============================================================================
+
+# ---------- 1. 构建产物（体积最大，且随时可重新生成）----------
+/build/
+/app/build/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.idsig
+*.hprof
+captures/
+.cxx/
+
+# ---------- 2. Gradle / Kotlin 缓存 ----------
+/.gradle/
+/.kotlin/
+local.properties
+
+# ---------- 3. 签名与密钥（泄露 = 别人可以冒充你发版）----------
+/keystore/
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+
+# ---------- 4. 含明文密码的本地构建配置 ----------
+# gradle.properties 里有签名口令，不能上传。
+# 已附 gradle.properties.example 作为脱敏模板，别人 clone 后复制改名即可。
+gradle.properties
+
+# ---------- 5. 本地临时文件与验证产物 ----------
+/.tmp-verify/
+/.tmp-*/
+tmp/
+*.log
+*.tmp
+*.bak
+*.orig
+
+# ---------- 6. IDE / 编辑器 ----------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*~
+
+# ---------- 7. 操作系统文件 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- 8. 本地模型文件（几百 MB 起，走网盘/HF 托管）----------
+/models/
+*.onnx
+*.tflite
+*.spm
+
+# ---------- 9. 打包好的安装包（走 GitHub Releases 发布）----------
+/apk/
+/release/

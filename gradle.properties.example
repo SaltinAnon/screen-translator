@@ -1,0 +1,27 @@
+# ============================================================================
+# 这是 gradle.properties 的脱敏模板（可以安全上传）
+#
+# 用法：新机器 clone 项目后，把它复制一份并改名为 gradle.properties
+#       cp gradle.properties.example gradle.properties
+# 然后按需填写下方的密钥字段。真实的 gradle.properties 已被 .gitignore 忽略。
+# ============================================================================
+
+org.gradle.jvmargs=-Xmx3072m -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.configuration-cache=false
+
+android.useAndroidX=true
+android.nonTransitiveRClass=true
+android.defaults.buildfeatures.buildconfig=false
+
+kotlin.code.style=official
+
+# ---- 可选：把 Gemini API Key 编进 BuildConfig（也可在 App 设置页里填，优先级更高）----
+geminiApiKey=
+
+# ---- release 签名（keystore/screentranslator.jks，密钥文件本身不随仓库分发）----
+# 下面三项请填你自己的签名库信息，不要提交真实口令
+st.keyAlias=
+st.keyStorePass=
+st.keyPass=

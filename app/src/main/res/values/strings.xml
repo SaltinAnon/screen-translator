@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">屏幕实时翻译</string>
+    <string name="tile_label">屏幕翻译</string>
+
+    <string name="notif_channel_name">屏幕翻译服务</string>
+    <string name="notif_channel_desc">屏幕实时翻译前台服务的常驻通知</string>
+    <string name="notif_title">屏幕实时翻译</string>
+    <string name="notif_title_starting">正在启动屏幕翻译</string>
+    <string name="notif_text_starting">正在申请投屏权限…</string>
+    <string name="notif_text_running">屏幕翻译服务运行中</string>
+    <string name="action_stop">停止</string>
+    <string name="action_clear">清空</string>
+    <string name="action_translate_now">翻译一次</string>
+
+    <string name="status_idle">未启动</string>
+    <string name="status_running">运行中</string>
+    <string name="status_no_frame">未取到画面</string>
+    <string name="status_projection_revoked">投屏权限已被撤销，翻译已停止</string>
+    <string name="status_manual_on">待命 · 点悬浮球翻译当前屏幕</string>
+    <string name="status_bubble_reset">悬浮球已复位到默认位置</string>
+    <string name="status_auto_on">连续翻译中</string>
+
+    <string name="err_overlay_permission">缺少悬浮窗权限，悬浮球和译文都无法显示</string>
+    <string name="err_no_token">未获得有效的投屏授权</string>
+    <string name="err_no_api_key">未配置 API Key</string>
+
+    <string name="toast_started">屏幕翻译已启动，注意屏幕边缘的悬浮球</string>
+    <string name="toast_capture_denied">已取消投屏授权</string>
+    <string name="toast_need_overlay">请先授予「显示在其他应用上层」权限，否则看不到悬浮球</string>
+
+    <!-- 屏幕上的提示条 -->
+    <string name="hint_need_overlay">还没有「显示在其他应用上层」权限，悬浮球和译文都显示不出来。点这里回到设置页授权。</string>
+    <string name="hint_no_api_key">还没填 %1$s 的 API Key，已临时改用「端侧离线」翻译。到设置页填好 Key 后会自动切回云端。</string>
+    <string name="hint_offline_pair_unsupported">端侧离线模型不支持「%1$s → %2$s」这个语言对，请换一个语言或改用云端模式。</string>
+    <string name="hint_offline_opus_pair_missing">Opus-MT 没有「%1$s → %2$s」这个方向，而且也没法用英语接力补出来（上游没训过这一侧的英语方向）。请把离线引擎换回 ML Kit，或改用云端模式。</string>
+    <string name="hint_offline_opus_enhanced_pair_missing">Opus-MT 没有「%1$s → %2$s」这个方向，也没法用英语接力补出来（这一侧的英语方向上游没训过）。请换回 ML Kit 档（覆盖更广，经英语中转），或改用云端模式。</string>
+    <string name="hint_offline_opus_pivot">Opus-MT 没有「%1$s → %3$s」的直接模型，本次改用「%2$s」两段接力翻译（先译成英语、再译成%3$s），速度约为直译的一半，个别句子会带上二次转译的偏差。</string>
+    <string name="hint_offline_model_missing">「%1$s」的模型还没下载完整。请到设置页 →「模型」→「端侧离线引擎」里点「下载模型」。</string>
+    <string name="hint_offline_opus_auto_source">Opus-MT 是按语言对训练的模型，无法自动检测源语言。请在设置页把源语言改成具体语言。</string>
+    <string name="hint_bubble_off">悬浮球已关闭：现在只能靠通知栏的「翻译一次」按钮触发。想找回悬浮球请到设置页打开。</string>
+    <!-- 文字系统不受支持时的提示（ML Kit 端侧只有拉丁/中文/日文/韩文四套识别器） -->
+    <string name="hint_script_offline_impossible">端侧没有「%1$s」的文字识别器（只有拉丁、中文、日文、韩文四套），离线模式读不出这种语言的界面。想要翻译请改用「云端 · 整屏多模态」模式。</string>
+    <string name="hint_script_switch_vision">识别「%1$s」需要让模型直接看图，已自动切到「云端 · 整屏多模态」模式。</string>
+    <string name="hint_script_need_cloud">端侧识别不了「%1$s」的文字，需要云端看图能力。请到设置页填好 API Key，并选择支持看图的模型。</string>
+    <string name="hint_script_need_vision_model">识别「%1$s」必须用支持看图的模型，当前服务商 %2$s 的模型不支持看图，请换一个带 vision / vl 的模型。</string>
+    <string name="banner_translate_failed">翻译失败：%1$s</string>
+    <string name="banner_nothing_found">没有识别到需要翻译的文字。试试把屏幕停在有外文内容的页面上，或在设置页调整「文字系统」与「OCR 放大倍数」。</string>
+    <string name="banner_landscape_recapture_failed">转屏后重建取帧链失败了，翻译会取不到画面。请回到设置页点一次「停止」再「开启翻译」即可恢复。</string>
+    <string name="status_no_frame_after_rotate">未取到画面（转屏后取帧链异常，请重新开启翻译）</string>
+</resources>
