@@ -22,8 +22,8 @@ android {
         applicationId = "com.saltin.screentranslator"
         minSdk = 26
         targetSdk = 34
-        versionCode = 13
-        versionName = "1.6.3"
+        versionCode = 14
+        versionName = "1.0.0"
         resourceConfigurations += listOf("zh", "en")
         // 编译期可注入一个默认 Key（gradle.properties 里的 llmApiKey），
         // 留空也不影响：用户可以在 App 设置页里自己填，或改用端侧离线模式。
