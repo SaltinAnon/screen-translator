@@ -557,7 +557,13 @@ class TranslationPipeline(private val ocr: OcrProcessor) {
     }
 
     private fun describe(t: Throwable): String =
-        t.message?.takeIf { it.isNotBlank() } ?: t::class.java.simpleName
+        // 网络层失败给结构化的人话提示（明文被拦/连不上/超时/DNS），
+        // 其余异常沿用原始 message —— 那些本来就是中文业务提示。
+        if (t is java.io.IOException) {
+            readableNetworkError(t)
+        } else {
+            t.message?.takeIf { it.isNotBlank() } ?: t::class.java.simpleName
+        }
 
     fun release() {
         ocrSlot.release()

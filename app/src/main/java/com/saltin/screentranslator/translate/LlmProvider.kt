@@ -203,7 +203,9 @@ object LlmProviders {
         keyHint = "随便填，Ollama 不校验",
         consoleUrl = "https://ollama.com/download",
         note = "完全免费、数据不出内网。需要把地址改成电脑在局域网的 IP（不是 127.0.0.1），" +
-            "并让 Ollama 监听 0.0.0.0：设置环境变量 OLLAMA_HOST=0.0.0.0 后重启。",
+            "并让 Ollama 监听 0.0.0.0：设置环境变量 OLLAMA_HOST=0.0.0.0 后重启。" +
+            "本版本已放行局域网明文 http://，无需额外配置；" +
+            "自检方法：用手机浏览器打开 http://电脑IP:11434，能看到 Ollama is running 即网络是通的。",
     )
 
     val CUSTOM = LlmProvider(

@@ -36,7 +36,10 @@ object LlmDiagnostics {
 
     private val http = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(45, TimeUnit.SECONDS)
+        // 120s：本地自建服务（Ollama / LM Studio）首次请求要把模型权重读进内存，
+        // 7B 冷启动二三十秒很常见；原来 45s 会把「正在加载」误判成「超时」。
+        // 云端服务正常几秒内就回，等久一点没有副作用。
+        .readTimeout(120, TimeUnit.SECONDS)
         .build()
 
     private const val TEXT_PROBE = "只回复两个字符：OK"
@@ -282,7 +285,23 @@ object LlmDiagnostics {
             .post(payload.toRequestBody(JSON_MEDIA))
         headers.forEach { (key, value) -> builder.addHeader(key, value) }
 
-        val response = http.newCall(builder.build()).execute()
+        val response = try {
+            http.newCall(builder.build()).execute()
+        } catch (t: java.io.IOException) {
+            // 网络层失败（明文被拦 / 连不上 / 超时 / DNS）先翻成人话再抛出，
+            // 否则用户只会看到一句英文，误以为是 Key 或模型名填错了。
+            val friendly = readableNetworkError(t)
+            LlmExchangeLog.record(
+                label = "${cfg.provider.label} / ${cfg.model}",
+                url = url,
+                request = payload,
+                response = "",
+                httpCode = 0,
+                note = "连接失败：$friendly",
+                apiKey = cfg.apiKey,
+            )
+            throw TranslationException(friendly, t)
+        }
         val body = response.use { it.body?.string().orEmpty() }
         val code = response.code
 

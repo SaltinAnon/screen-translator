@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  明文 HTTP 放行策略
+
+  背景：本地自建模型服务（Ollama / LM Studio / llama.cpp / vLLM / One-API 中转…）
+  绝大多数只监听 http://，没有证书。而 targetSdk ≥ 28 时 Android 默认禁止明文流量，
+  请求会在建立 TCP 连接之前就被系统拦下，抛出：
+      CLEARTEXT communication to 192.168.x.x not permitted by network security policy
+  这条报错来自 Android 系统，不是服务端，所以用户无论如何改 Base URL、填什么 Key
+  都不会好 —— 必须在清单层放行。
+
+  为什么是全局 base-config 而不是只放行某个域名：
+  network-security-config 的 <domain> 只能写确定的域名或 IP，不支持
+  192.168.*.* 这类网段通配，而用户家里的电脑 IP 是任意的，无法枚举。
+  因此只能全局放行 http://。
+
+  安全性说明：cleartextTrafficPermitted 只影响 http:// 明文链接的连通性；
+  https:// 请求依旧走系统信任链做完整证书校验，不会因此变弱。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -3,7 +3,7 @@
 Android 原生（Kotlin + Jetpack Compose）的**手机屏幕实时翻译**应用：
 抓取屏幕 → ML Kit OCR 定位 → 大模型翻译 → 悬浮窗把译文**原位覆盖**在原文字上。
 
-当前版本：**v1.0.0**
+当前版本：**v1.0.1**
 
 > **关于版本号**
 >
@@ -17,7 +17,8 @@ Android 原生（Kotlin + Jetpack Compose）的**手机屏幕实时翻译**应�
 
 | 对外版本 | 原内部版本 | 主要内容 | 状态 |
 | --- | --- | --- | --- |
-| **v1.0.0** | v1.6.3 | 截图被拒降级、OCR 对比度增强 | **已发布** |
+| **v1.0.1** | — | 放行局域网明文 HTTP（修本地 Ollama 连不上） | **已发布** |
+| v1.0.0 | v1.6.3 | 截图被拒降级、OCR 对比度增强 | 已发布 |
 | 0.9.0 | v1.6.2 | 三档重构、tc-big 中→日直译、HF 托管 | 内测 |
 | 0.8.0 | v1.6.1 | 修「译文 == 原文」静默失败、删除 NLLB | 内测 |
 | 0.7.0 | v1.6.0 | 横屏 resize 异常、NLLB 起始符 | 内测 |
@@ -32,6 +33,24 @@ Android 原生（Kotlin + Jetpack Compose）的**手机屏幕实时翻译**应�
 | 0.1.0 | v1.0 | 四阶段原型跑通 | 内测 |
 
 > 下文各版本小节按**新编号**书写，括号里保留原内部版本号，方便对照旧记录与 `apk/old_versions/` 里的旧安装包。
+
+---
+
+## v1.0.1 修了什么
+
+**连不上本地 Ollama。** 报错是 `CLEARTEXT communication to 192.168.1.100 not permitted by
+network security policy`。这条报错来自 **Android 系统**，不是服务端 —— targetSdk ≥ 28 默认
+禁止明文 HTTP，而本地模型服务（Ollama / LM Studio / llama.cpp / vLLM）几乎都只提供 `http://`。
+请求在建立 TCP 连接**之前**就被拦下，所以改 Base URL、换 Key、换模型名都不会有任何效果。
+
+修法：新增 `res/xml/network_security_config.xml`，在清单里挂上 `android:networkSecurityConfig`，
+放行明文流量。`https://` 请求不受影响，依旧走系统信任链做完整证书校验。
+
+同时做了两处配套改善：
+
+- **网络错误翻成人话**：把 `CLEARTEXT` / `Connection refused` / `超时` / `DNS 失败` / 自签名证书
+  分别翻译成中文提示，并给出对应的排查动作（`OLLAMA_HOST=0.0.0.0`、同一 Wi-Fi、防火墙端口）。
+- **连接测试超时 45s → 120s**：本地 7B 模型冷启动要二三十秒，原来会被误判成「超时」。
 
 ---
 

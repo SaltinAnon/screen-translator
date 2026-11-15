@@ -612,3 +612,47 @@ internal fun readableHttpError(code: Int, payload: String): String {
     }
     return "HTTP $code$hint$advice ${message.orEmpty()}".trim()
 }
+
+/**
+ * 把 OkHttp / java.net 抛出的网络层异常翻成人话。
+ *
+ * 为什么必须做这一步：这些异常的 message 是英文且极度技术化，用户看到
+ * 「CLEARTEXT communication to 192.168.1.100 not permitted by network security policy」
+ * 只会以为是 Key 或地址填错了，于是一直在错误的方向上折腾 —— 实际上请求连发都没发出去。
+ * 网络类失败几乎都发生在「连服务之前」，所以提示要指向环境（服务监听地址、防火墙、同一 Wi-Fi），
+ * 而不是指向模型名或密钥。
+ */
+internal fun readableNetworkError(t: Throwable): String {
+    val raw = t.message.orEmpty().trim()
+    val lower = raw.lowercase()
+    // 从 "to 192.168.1.100" / "host localhost" 里抠出目标，方便用户对照自己填的地址
+    val host = Regex("""(?:to|host)\s+([\w.\-]+)""").find(raw)?.groupValues?.get(1)
+    val at = host?.let { "（$it）" } ?: ""
+
+    return when {
+        lower.contains("cleartext") ->
+            "系统拦截了明文 HTTP 请求$at。本地模型服务大多是 http://，而 Android 默认禁止明文流量；" +
+                "本版本已放行，若仍出现这条，请把 Base URL 换成 https:// 或反馈给我们。"
+
+        t is javax.net.ssl.SSLHandshakeException || lower.contains("certificate") ->
+            "HTTPS 证书校验失败$at。自签名证书不被系统信任，请改用 http:// 访问，" +
+                "或给服务配上受信任的正式证书。"
+
+        t is java.net.UnknownHostException ->
+            "域名解析失败$at。检查 Base URL 是否写错，或直接改用 IP 地址；" +
+                "开了 VPN / 私有 DNS 时先关掉再试。"
+
+        t is java.net.ConnectException || lower.contains("connection refused") ||
+            lower.contains("failed to connect") ->
+            "连不上服务$at。本地服务默认只监听 127.0.0.1，手机访问不到 —— " +
+                "Ollama 需以 OLLAMA_HOST=0.0.0.0 重启（LM Studio 要勾选 Serve on Local Network）；" +
+                "再确认手机与电脑在同一 Wi-Fi、电脑防火墙放行了该端口。" +
+                "最快的自检：用手机浏览器打开 http://<电脑IP>:11434，能看到 Ollama is running 就说明网络通了。"
+
+        t is java.net.SocketTimeoutException || lower.contains("timeout") || lower.contains("timed out") ->
+            "请求超时$at。服务可能没启动、被防火墙丢弃，或模型首次加载太慢" +
+                "（大模型冷启动常要几十秒）。稍等再试，或先在电脑上手动发一次请求把它唤醒。"
+
+        else -> raw.ifBlank { t::class.java.simpleName }
+    }
+}

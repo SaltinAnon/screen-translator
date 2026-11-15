@@ -8,6 +8,22 @@
 > 仅以本文件与 `apk/old_versions/` 中的历史安装包为记录。
 > 自 `v1.0.0` 起，每个版本都有对应的 Git 标签与 GitHub Release。
 
+## [1.0.1] - 2026-11-11
+
+### 修复
+
+- **本地 Ollama / 局域网自建服务连不上**：新增 `network_security_config.xml`，放行明文 HTTP。
+  此前 targetSdk 34 下 Android 会在建连前直接拦截 `http://192.168.x.x`，
+  抛出 `CLEARTEXT communication ... not permitted by network security policy`，
+  与 API Key、模型名、服务端状态均无关。
+
+### 改进
+
+- 网络层异常改为中文可读提示：明文被拦 / 连接被拒 / 超时 / 域名解析失败 / 自签名证书，
+  每类都附带具体排查动作（如 `OLLAMA_HOST=0.0.0.0`、同一 Wi-Fi、防火墙放行端口）。
+- 「保存并测试」的读超时 45s → 120s，避免本地 7B 模型冷启动被误判为超时。
+- 「本地 Ollama」的说明文案补充自检方法：手机浏览器直接访问 `http://电脑IP:11434`。
+
 ## [1.0.0] - 2026-10-19
 
 第一个功能完整的正式版，对应内部开发版本 **v1.6.3**。
